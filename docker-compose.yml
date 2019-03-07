@@ -12,6 +12,8 @@ services:
       MYSQL_PASSWORD: devPassword
     ports:
       - "9906:3306"
+    volumes:
+      - ./SQL:/docker-entrypoint-initdb.d
   web:
     build: .
     container_name: php_web
