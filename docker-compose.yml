@@ -1,0 +1,25 @@
+# ./docker-compose.yml
+
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: adminPassword
+      MYSQL_DATABASE: Shortend_URLS 
+      MYSQL_USER: fraser
+      MYSQL_PASSWORD: devPassword
+    ports:
+      - "9906:3306"
+  web:
+    build: .
+    container_name: php_web
+    depends_on:
+      - db
+    volumes:
+      - ./php/:/var/www/html/
+    ports:
+      - "8100:80"
+    stdin_open: true
+    tty: true
