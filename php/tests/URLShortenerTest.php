@@ -25,10 +25,4 @@ class URLShortenerTest extends TestCase
         $this->assertTrue(!strpos($url, "Duplicate Entry")); // we have returned url with a shortcode
     }
 
-    public function testItProducesAURLRedirect(): void
-    {
-        $redirect = new Redirect();
-        echo $redirect->redirectOriginalURL("EEEEEE");
-        
-    }
 }
