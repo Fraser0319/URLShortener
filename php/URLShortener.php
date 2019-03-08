@@ -23,8 +23,6 @@ switch($request_method)
         break;
 }
 
-
-    
 class URLShortener
 {
     public $db = null;
@@ -45,6 +43,7 @@ class URLShortener
 
         $db = new Connection();
         $connection =  $db->getConnstring();
+        $response = "";
 
         $url = mysqli_real_escape_string($connection,$url);
         $shortUrlKey = $this->shorten();
@@ -55,12 +54,16 @@ class URLShortener
 
             
             if ($query->execute() === TRUE) {
-                echo "New record created successfully";
+                $query->close();
+                $response = "http://localhost:8100/".$shortUrlKey;
+                header('HTTP/1.1 200 OK');
+                header('Content-Type: text/plain');
+                echo json_encode($response);
             } else {
+                header("HTTP/1.1 500 Server Error");
                 echo "Error: " . $query . "<br>" . $this->query;
             }
-            $query->close();
-
+            
         } catch(Exception $e) {
             echo "Error: " . $e;
             $query->close();
@@ -74,12 +77,15 @@ class URLShortener
 
 		$query = "SELECT * FROM shortend_urls";
 		$response = array();
-		$result = mysqli_query($connection, $query);
+        $result = mysqli_query($connection, $query);
+        
 		while($row = mysqli_fetch_array($result)) {
 			$response[]=$row;
         }
+
         $connection->close();
-		header('Content-Type: application/json');
+        header('HTTP/1.1 200 OK');
+		header('Content-Type: text/plain');
 		echo json_encode($response);
 	}
 
