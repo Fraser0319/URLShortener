@@ -8,7 +8,7 @@ switch($request_method)
 {
     case 'GET':
     {
-        $redirect->redirectOriginalURL($_GET['c']);
+        $redirect->redirectOriginalURL($_GET['c']); // get the short code from the url.
     }
     break;
     default:
@@ -42,7 +42,7 @@ class Redirect {
         $query->execute();
         $result = $query->get_result();
 
-        if($result->num_rows === 0) exit('This URL does not exist !');
+        if($result->num_rows === 0) exit('This URL does not exist !'); 
         while($row = $result->fetch_assoc()) {
             $response[]=$row;
         }

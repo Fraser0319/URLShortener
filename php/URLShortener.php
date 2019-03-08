@@ -8,10 +8,9 @@ switch($request_method)
 {
     case 'GET':
     {
-        if(!empty($_GET["url"])) {
+        if(!empty($_GET["url"])) { // check if a url is present otherwise show all urls
             $shortUrlKey = $url->shorten();
             $url->createShortendUrl($_GET["url"], $shortUrlKey);
-            
         } else {
             $url->getShortendUrls();
         }
@@ -37,8 +36,8 @@ class URLShortener
     }
     
     function shorten() {
-        $base64String = base64_encode(rand(1,100000));
-        return $res = preg_replace("/[^a-zA-Z0-9]/", "", $base64String); // only have numbers and chars from a-z
+        $base64String = base64_encode(rand(1,100000)); // generate a random base64 string for the short code.
+        return $res = preg_replace("/[^a-zA-Z0-9]/", "", $base64String); // only have numbers and chars from a-z and A-Z
     }
 
    function createShortendUrl($url, $shortUrlKey){
@@ -53,11 +52,11 @@ class URLShortener
         $query->bind_param("ss", $shortUrlKey, $url);
         
         if ($query->execute() === TRUE) {
-            $response = "http://localhost:8100/".$shortUrlKey;
+            $response = "http://localhost:8100/" . $shortUrlKey;
             echo $response;
         } else {
-
-            if($connection->errno === 1062) echo 'Duplicate entry';
+            // we check for duplicates with this error code in the response
+            if($connection->errno === 1062) echo 'Duplicate entry'; 
         }
         $query->close();
             
