@@ -1,0 +1,4 @@
+RewriteEngine On # Turn on the rewriting engine
+RewriteRule ^shorten/?$ URLShortener.php [NC,L]
+RewriteRule ^shorten/([0-9]+)/?$ URLShortener.php?id=$1 [NC,L]
+RewriteRule ^([a-zA-Z0-9]+)/?$ redirect.php?c=$1 [L] 
