@@ -2,12 +2,10 @@
 
 <html>
     <head>
-        <title>Hello World</title>
+        <title>URL Shortener</title>
     </head>
 
     <body>
-        <?php
-            echo "hello there ! ";
-        ?>
+        <h1>URL Shortener</h1>
     </body>
 </html>
