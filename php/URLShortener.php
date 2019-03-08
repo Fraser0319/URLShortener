@@ -8,9 +8,9 @@ switch($request_method)
 {
     case 'GET':
     {
-
         if(!empty($_GET["url"])) {
-            $url->createShortendUrl($_GET["url"]);
+            $shortUrlKey = $url->shorten();
+            $url->createShortendUrl($_GET["url"], $shortUrlKey);
             
         } else {
             $url->getShortendUrls();
@@ -23,15 +23,17 @@ switch($request_method)
         break;
 }
 
+
+
 class URLShortener
 {
     public $db = null;
     public $connection = null;
+    
 
     public function __construct() 
     {
-        // Connect to database
-        include("connection.php");
+        require_once('Connection.php');
     }
     
     function shorten() {
@@ -39,35 +41,27 @@ class URLShortener
         return $res = preg_replace("/[^a-zA-Z0-9]/", "", $base64String); // only have numbers and chars from a-z
     }
 
-   function createShortendUrl($url){
-
+   function createShortendUrl($url, $shortUrlKey){
+        
         $db = new Connection();
         $connection =  $db->getConnstring();
         $response = "";
 
         $url = mysqli_real_escape_string($connection,$url);
-        $shortUrlKey = $this->shorten();
+    
+        $query = $connection->prepare("INSERT INTO shortend_urls (short_url_key, original_url) VALUES (?, ?)");
+        $query->bind_param("ss", $shortUrlKey, $url);
+        
+        if ($query->execute() === TRUE) {
+            $response = "http://localhost:8100/".$shortUrlKey;
+            echo $response;
+        } else {
 
-        try {
-            $query = $connection->prepare("INSERT INTO shortend_urls (short_url_key, original_url) VALUES (?, ?)");
-            $query->bind_param("ss", $shortUrlKey, $url);
-
-            
-            if ($query->execute() === TRUE) {
-                $query->close();
-                $response = "http://localhost:8100/".$shortUrlKey;
-                header('HTTP/1.1 200 OK');
-                header('Content-Type: text/plain');
-                echo json_encode($response);
-            } else {
-                header("HTTP/1.1 500 Server Error");
-                echo "Error: " . $query . "<br>" . $this->query;
-            }
-            
-        } catch(Exception $e) {
-            echo "Error: " . $e;
-            $query->close();
+            if($connection->errno === 1062) echo 'Duplicate entry';
         }
+        $query->close();
+            
+        
     }
 
    function getShortendUrls()
@@ -84,7 +78,6 @@ class URLShortener
         }
 
         $connection->close();
-        header('HTTP/1.1 200 OK');
 		header('Content-Type: text/plain');
 		echo json_encode($response);
 	}
