@@ -17,6 +17,8 @@ switch($request_method)
         break;
 }
 
+
+
 class Redirect {
 
     public $db = null;
@@ -24,7 +26,7 @@ class Redirect {
 
     public function __construct() 
     {
-        include("connection.php");
+        require_once('Connection.php'); 
     }
 
     public function redirectOriginalURL($shortCode){
